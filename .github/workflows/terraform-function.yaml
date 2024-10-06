@@ -53,9 +53,6 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ vars.REGION_DEFAULT }}      
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-
       - name: Setup Terraform
         if: success()
         uses: hashicorp/setup-terraform@v3
