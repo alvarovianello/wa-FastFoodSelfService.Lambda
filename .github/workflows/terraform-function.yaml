@@ -1,4 +1,4 @@
-name: Deploy .NET Core 8 Lambda
+name: Create Function Lambda and Api Gateway
 
 on:
   workflow_dispatch:
