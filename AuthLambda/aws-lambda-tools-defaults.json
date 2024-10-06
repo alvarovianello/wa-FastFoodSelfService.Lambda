@@ -1,0 +1,17 @@
+{
+  "Information": [
+    {
+      "Key": "FunctionHandler",
+      "Value": "AuthLambda::AuthLambda.Function::FunctionHandler"
+    }
+  ],
+  "TestToolPort": 5051,
+  "profile": "",
+  "region": "",
+  "configuration": "Release",
+  "function-architecture": "x86_64",
+  "function-runtime": "dotnet8",
+  "function-memory-size": 512,
+  "function-timeout": 30,
+  "function-handler": "AuthLambda::AuthLambda.Function::FunctionHandler"
+}
