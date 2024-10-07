@@ -36,8 +36,11 @@ jobs:
       - name: Zip publish folder
         run: zip -r function.zip ./publish/*
 
+      - name: Move zip file to terraform directory
+        run: mv ./function.zip ./terraform_lambda/
+
       - name: List files after zip
-        run: ls -la ./publish
+        run: ls -la ./terraform_lambda
 
       - name: AWS Configure
         uses: aws-actions/configure-aws-credentials@v4
