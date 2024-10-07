@@ -32,10 +32,10 @@ jobs:
         run: dotnet build ./AuthLambda/AuthLambda.csproj --configuration Release
 
       - name: Publish project
-        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release /p:PublishReadyToRun=false
-
+        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release --output ./publish /p:PublishReadyToRun=false
+    
       - name: Zip publish folder
-        run: zip -r function.zip ./AuthLambda/bin/Release/net8.0/publish/**
+        run: zip -r function.zip ./publish/*
 
       - name: Move zip file to terraform directory
         run: mv ./function.zip ./terraform_lambda/

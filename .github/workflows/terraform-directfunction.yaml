@@ -1,0 +1,55 @@
+name: Create Function Lambda ONLY
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-function:
+    name: Build and Deploy Funtion Lambda
+    runs-on: ubuntu-latest
+
+    environment: production
+
+    env:
+      TF_VAR_regionDefault: ${{ vars.REGION_DEFAULT }}
+      TF_VAR_projectName: ${{ vars.PROJECT_NAME }}
+      TF_VAR_stageName: ${{ vars.STAGE_NAME }}
+      TF_VAR_labRole: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: AWS Configure
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ vars.REGION_DEFAULT }}      
+
+      - name: Setup .NET Core 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./AuthLambda/AuthLambda.csproj
+      
+      - name: Deploy function to AWS Lambda
+        run: dotnet lambda deploy-function AuthLambda --configuration Release --region ${{ vars.REGION_DEFAULT }} --role "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+
+      - name: Publish project
+        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release --output ./publish --framework "net8.0" /p:GenerateRuntimeConfigurationFiles=true --runtime linux-x64 --self-contained false
+      
+      - name: Zip publish folder
+        run: zip -r function.zip ./publish/*
+
+      - name: Move zip file to terraform directory
+        run: mv ./function.zip ./terraform_lambda/
+
+      - name: Upload function.zip as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: function-zip
+          path: ./terraform_lambda/function.zip
