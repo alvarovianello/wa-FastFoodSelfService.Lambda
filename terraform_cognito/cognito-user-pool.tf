@@ -12,14 +12,14 @@ resource "aws_cognito_user_pool" "fastfood_user_pool" {
   }
 
   mfa_configuration = "OFF"
-  
-  alias_attributes  = [
+
+  alias_attributes = [
     "preferred_username"
   ]
 
   account_recovery_setting {
     recovery_mechanism {
-      name = "admin_only"
+      name     = "admin_only"
       priority = 1
     }
   }
@@ -49,8 +49,9 @@ resource "aws_cognito_user_pool" "fastfood_user_pool" {
 }
 
 resource "aws_cognito_user_pool_client" "fastfood_user_pool_client" {
-    name                = "${var.projectName}-ClientUserPool"
-    user_pool_id        = aws_cognito_user_pool.fastfood_user_pool.id
-    generate_secret     = false
-    explicit_auth_flows = ["ADMIN_NO_SRP_AUTH"]
+  name                         = "${var.projectName}-ClientUserPool"
+  user_pool_id                 = aws_cognito_user_pool.fastfood_user_pool.id
+  generate_secret              = false
+  supported_identity_providers = ["COGNITO"]
+  explicit_auth_flows          = ["ADMIN_NO_SRP_AUTH"]
 }
