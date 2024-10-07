@@ -12,7 +12,10 @@ resource "aws_cognito_user_pool" "fastfood_user_pool" {
   }
 
   mfa_configuration = "OFF"
-  alias_attributes  = "preferred_username"
+  
+  alias_attributes  = [
+    "preferred_username"
+  ]
 
   account_recovery_setting {
     recovery_mechanism {
