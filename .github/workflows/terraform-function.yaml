@@ -35,13 +35,13 @@ jobs:
         run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release --output ./publish --framework "net8.0" /p:GenerateRuntimeConfigurationFiles=true --runtime linux-x64 --self-contained false
 
       - name: List files .PUBLISH
-        run: ls -la ./publish/publish
+        run: ls -la ./publish/*
 
       - name: Change permissions of published files
-        run: chmod -R +rx ./publish/publish
+        run: chmod -R +rx ./publish/*
 
       - name: Zip publish folder
-        run: zip -r function.zip ./publish/publish/*
+        run: zip -r function.zip -j ./publish/*
 
       - name: Move zip file to terraform directory
         run: mv function.zip ./terraform_lambda/
