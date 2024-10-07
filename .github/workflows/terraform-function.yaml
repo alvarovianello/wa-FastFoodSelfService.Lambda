@@ -4,16 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy-function:
+  build-function:
     runs-on: ubuntu-latest
-
-    environment: production
-
-    env:
-      TF_VAR_regionDefault: ${{ vars.REGION_DEFAULT }}
-      TF_VAR_projectName: ${{ vars.PROJECT_NAME }}
-      TF_VAR_stageName: ${{ vars.STAGE_NAME }}
-      TF_VAR_labRole: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
     
     steps:
       - name: Checkout code
@@ -42,13 +34,31 @@ jobs:
       - name: List files after zip
         run: ls -la ./terraform_lambda
 
+  deploy-function:
+    name: Deploy Funtion Lambda
+    runs-on: ubuntu-latest
+    needs: build-function
+
+    environment: production
+
+    env:
+      TF_VAR_regionDefault: ${{ vars.REGION_DEFAULT }}
+      TF_VAR_projectName: ${{ vars.PROJECT_NAME }}
+      TF_VAR_stageName: ${{ vars.STAGE_NAME }}
+      TF_VAR_labRole: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: AWS Configure
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ vars.REGION_DEFAULT }}     
+          role-to-assume: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+          aws-region: ${{ vars.REGION_DEFAULT }}      
 
       - name: Setup Terraform
         if: success()
