@@ -1,0 +1,58 @@
+name: Create User Pool Cognito
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-user-pool:
+    name: Create User Pool Cognito
+    runs-on: ubuntu-latest
+
+    environment: production
+
+    env:
+      TF_VAR_regionDefault: ${{ vars.REGION_DEFAULT }}
+      TF_VAR_projectName: ${{ vars.PROJECT_NAME }}
+      TF_VAR_labRole: "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: AWS Configure
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ vars.REGION_DEFAULT }}      
+
+      - name: Setup Terraform
+        if: success()
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format
+        id: fmt
+        working-directory: terraform_cognito
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        working-directory: terraform_cognito
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        id: validate
+        working-directory: terraform_cognito
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: terraform_cognito
+        run: terraform plan -out=tfplan -no-color -input=false
+        continue-on-error: true
+
+      - name: Terraform Apply
+        working-directory: terraform_cognito
+        run: terraform apply -input=false -auto-approve
