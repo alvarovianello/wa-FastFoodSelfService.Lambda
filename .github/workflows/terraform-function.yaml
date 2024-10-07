@@ -32,7 +32,7 @@ jobs:
         run: dotnet build ./AuthLambda/AuthLambda.csproj --configuration Release
 
       - name: Publish project
-        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release /p:PublishReadyToRun=true
+        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release /p:PublishReadyToRun=false
 
       - name: Zip publish folder
         run: zip -r function.zip ./AuthLambda/bin/Release/net8.0/publish/**
