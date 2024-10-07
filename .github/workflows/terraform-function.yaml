@@ -40,8 +40,11 @@ jobs:
       - name: Move zip file to terraform directory
         run: mv ./function.zip ./terraform_lambda/
 
-      - name: List files after zip
-        run: ls -la ./terraform_lambda
+      - name: Upload function.zip as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: function-zip
+          path: ./terraform_lambda/function.zip
 
       - name: AWS Configure
         uses: aws-actions/configure-aws-credentials@v4
