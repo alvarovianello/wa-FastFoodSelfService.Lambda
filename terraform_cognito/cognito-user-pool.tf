@@ -25,7 +25,7 @@ resource "aws_cognito_user_pool" "fastfood_user_pool" {
     name                = "name"
     attribute_data_type = "String"
     required            = true
-    mutable             = true
+    mutable             = false
   }
 
 
@@ -43,11 +43,11 @@ resource "aws_cognito_user_pool" "fastfood_user_pool" {
     required            = true
     mutable             = false
   }
+}
 
-  resource "aws_cognito_user_pool_client" "fastfood_user_pool_client" {
+resource "aws_cognito_user_pool_client" "fastfood_user_pool_client" {
     name                = "${var.projectName}-ClientUserPool"
     user_pool_id        = aws_cognito_user_pool.fastfood_user_pool.id
     generate_secret     = false
     explicit_auth_flows = ["ADMIN_NO_SRP_AUTH"]
-  }
 }
