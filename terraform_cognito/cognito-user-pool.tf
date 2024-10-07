@@ -12,23 +12,30 @@ resource "aws_cognito_user_pool" "fastfood_user_pool" {
   }
 
   mfa_configuration = "OFF"
+  alias_attributes  = "preferred_username"
 
   account_recovery_setting {
     recovery_mechanism {
       name = "admin_only"
+      priority = 1
     }
   }
 
-  lambda_config {
-    post_confirmation              = ""
-    pre_sign_up                    = ""
-    pre_authentication             = ""
-    define_auth_challenge          = ""
-    create_auth_challenge          = ""
-    verify_auth_challenge_response = ""
+  schema {
+    name                = "name"
+    attribute_data_type = "String"
+    required            = true
+    mutable             = true
   }
 
-  required_attributes = ["email", "name"]
+
+  schema {
+    name                = "email"
+    attribute_data_type = "String"
+    required            = true
+    mutable             = false
+  }
+
 
   schema {
     name                = "cpf"
