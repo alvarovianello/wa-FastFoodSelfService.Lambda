@@ -23,7 +23,7 @@ jobs:
       - name: Setup .NET Core 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
         run: dotnet restore ./AuthLambda/AuthLambda.csproj
@@ -32,10 +32,10 @@ jobs:
         run: dotnet build ./AuthLambda/AuthLambda.csproj --configuration Release
 
       - name: Publish project
-        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release --output ./publish /p:PublishReadyToRun=false
+        run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release /p:PublishReadyToRun=true
 
       - name: Zip publish folder
-        run: zip -r function.zip ./publish/*
+        run: zip -r function.zip ./AuthLambda/bin/Release/net8.0/publish/**
 
       - name: Move zip file to terraform directory
         run: mv ./function.zip ./terraform_lambda/
