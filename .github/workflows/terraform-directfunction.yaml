@@ -40,7 +40,8 @@ jobs:
         run: dotnet tool install -g Amazon.Lambda.Tools
 
       - name: Deploy function to AWS Lambda
-        run: dotnet lambda deploy-function ./AuthLambda/AuthLambda.csproj --configuration Release --region ${{ vars.REGION_DEFAULT }} --role "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+        run: dotnet lambda deploy-function AuthLambda --configuration Release --region ${{ vars.REGION_DEFAULT }} --role "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/LabRole"
+        working-directory: ./AuthLambda
 
       - name: Publish project
         run: dotnet publish ./AuthLambda/AuthLambda.csproj --configuration Release --output ./publish --framework "net8.0" /p:GenerateRuntimeConfigurationFiles=true --runtime linux-x64 --self-contained false
